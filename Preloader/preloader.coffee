@@ -2,6 +2,7 @@ class @Preloader
 
   constructor: (game) ->
     @images = new Array()
+    @out = new Array()
     @preloaded = 0
     @game = game
     @path = ""
@@ -22,10 +23,13 @@ class @Preloader
     console.log("[Preloader] Added image: Path: " + @path + src + ", Name: " + name)
 
   getImage: (name) ->
-    for i in [0...@images.length]
-      json = JSON.parse(@images[i])
-      if(json["name"] == name)
-        @images[i] ?= @getImage("no_images")
+    console.log(@out)
+    for i in [0...@out.length]
+      json = @out[i]
+      console.log("Name: " + json.name + ", " + name)
+      if(json.name == name)
+        console.log("match")
+        return json.image
 
   preloadImages: () ->
     if(@images.length <= 0)
@@ -36,10 +40,7 @@ class @Preloader
       src = json["src"]
       image = new Image()
       image.src = src
-      image.onload = =>
-        @preloaded++
-        @images[i] = ["name": name, "src": src, "image": image]
-        @updateBar()
+      new LoadedImage(@, name, src, image)
 
   updateBar: () ->
     bar = document.getElementById("preloader_move")
@@ -53,3 +54,14 @@ class @Preloader
     bar.style.width = w * @preloaded + "px"
     if(@preloaded >= total)
       @game.preloadDone()
+
+class LoadedImage
+
+  constructor: (@loader, @name, @src, @image) ->
+    @image.onload = =>
+      @loader.updateBar()
+      if(@loader.out.push(@))
+        console.log("Added image" + @name)
+        @loader.preloaded++
+      else
+        console.log("Error adding image" + @name)
