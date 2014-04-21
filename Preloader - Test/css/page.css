@@ -1,0 +1,13 @@
+#preloader{
+    width: 400px;
+    height: 40px;
+    background-color: red;
+    margin: 10px auto;
+}
+
+#preloader_move{
+    width: 0px;
+    height: 40px;
+    background-color: yellow;
+    float: left;
+}
